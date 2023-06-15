@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.main-content {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.content-1 {
+  background-color: red;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+.content-2 {
+  background-color: blue;
+  width: 100%;
+  height: 100%;
+  flex: 2;
+}
+.content-3 {
+  background-color: orange;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+/* it is better to always indicate flex items width and height */
+
+@media screen and (max-width: 500px) {
+  .main-content {
+    flex-direction: column;
+  }
+}

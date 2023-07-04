@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken'
 import userModel from '../models/userModel.js'
 
+
+
 const verifyUser = (req, res, next, userName) => {
-    if(req.body.userName === userName) {
+
+    if(req.body.userName || req.params.userName === userName) {
         return next()
     }
 
@@ -11,6 +14,7 @@ const verifyUser = (req, res, next, userName) => {
 
 const verifyAdmin = (res, next, user) => {
     if (user?.isAdmin) {
+       
       return next()
     }
     return res.status(400).send("You are not authorized!");
@@ -19,7 +23,8 @@ const verifyAdmin = (res, next, user) => {
 //we are creating a middlewear
 //the third parameter allows us to go further if the conditions are met
 export const verifySessionToken = (req, res, next) => {
-    const token = req.body.session_token //this is not the correct form, but we keep it for now. instead of body there should be name cookie, but it didn't work
+    const token = req.headers.cookie.split("session_token=")[1] 
+    
     //session_token is what we named the cookie un userController
 
     if(!token) {
@@ -36,7 +41,10 @@ export const verifySessionToken = (req, res, next) => {
         //if there is no error
         const user = await userModel.findById(decodedToken.id)
 
-        if (user.isAdmin) {
+        const ADMIN_ROUTES = ["/get-all", "/delete-all"].includes(req.route.path)
+
+        if (user.isAdmin || ADMIN_ROUTES) {
+             //with above code ADMIN_ROUTES.includes(req.route.path) we check if that route is only allowed to admin
             verifyAdmin(res, next, user)
         } else {
         verifyUser(req, res, next, user?.userName);

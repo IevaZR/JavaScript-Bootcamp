@@ -7,7 +7,7 @@ export const loginUser = async (req, res) => {
     try{
         //we check if that user, who wants to login, exists
         const foundUser = await userModel.findOne({userName: req.body.userName})
-
+       
         //if the user doesn't exist, we send back a status message
         if(!foundUser) {
             return res.status(404).send('Username or Password is wrong!')
@@ -16,6 +16,7 @@ export const loginUser = async (req, res) => {
 
         //if foundUser we need to decrypt the password and compare it
         const isUserPasswordCorrect = bcrypt.compareSync(req.body.password.toString(), foundUser.password)
+        
         //the first parameter is the password that the user is entered when trying to log in, and the second is the encrypteed password to compare it to
 
         //if the password is not correct
@@ -93,7 +94,7 @@ export const getUser = async (req, res) => {
         const user = await userModel.findOne({userName: req.body.userName}, {password:0}) //the second parameter is from Mongoose documentation, which says, don't swend back the parameter named password
     
         
-        res.status(201).send(user) 
+        res.status(200).send(user) 
     } catch (error) {
         console.log(error)
         res.status(400).send(error)
@@ -124,10 +125,8 @@ export const updateUser = async (req, res) => {
         }, {
             new: true
         })
-    
-        const {password, ...remainingUserData} = updatedUser._doc
         
-        res.status(201).send(remainingUserData)
+        res.status(200).json(updateUser)
     
     } catch (error) {
         console.log(error)
